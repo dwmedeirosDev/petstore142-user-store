@@ -1,8 +1,10 @@
+
 // assertThat
 import static org.assertj.core.api.Assertions.assertThat;
 
 // Função given
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -93,12 +95,58 @@ public class TestStore {
                 .extract()
                 .response();
 
-                // Validando se o ID retornado está no intervalo desejado
-                int responseId = response.jsonPath().getInt("id");
-                assertThat(responseId).isBetween(1, 10);
+        // Validando se o ID retornado está no intervalo desejado
+        int responseId = response.jsonPath().getInt("id");
+        assertThat(responseId).isBetween(1, 10);
     }
 
-    public void testGetStore(){
-        
+    @Test
+    @Order(2)
+
+    public void testGetStore() {
+        Response response = given() // Dado que
+                .contentType(ct)
+                .log().all()
+
+                .when() // Quando
+                .get(baseURL + "/store/order/" + id)
+
+                .then() // Então
+                .log().all()
+
+                // Comparando o código de requisição
+                .statusCode(200)
+
+                // Comparando as respostas
+                .body("id", is(id))
+                .body("petId", is(petId))
+                .body("quantity", is(quantity))
+                .body("shipDate", is(shipDate))
+                .body("status", is(status))
+                .body("complete", is(complete))
+
+                // Teste de contrato
+                // Verificação das propriedadas existentes na resposta
+                .body("$", hasKey("id"))
+                .body("$", hasKey("petId"))
+                .body("$", hasKey("quantity"))
+                .body("$", hasKey("shipDate"))
+                .body("$", hasKey("status"))
+                .body("$", hasKey("complete"))
+
+                // Verificação dos formatos das propriedades existentes na resposta
+                .body("id", instanceOf(Integer.class))
+                .body("petId", instanceOf(Integer.class))
+                .body("quantity", instanceOf(Integer.class))
+                .body("shipDate", instanceOf(String.class))
+                .body("status", instanceOf(String.class))
+                .body("complete", instanceOf(Boolean.class))
+
+                .extract()
+                .response();
+
+        // Validando se o ID retornado está no intervalo desejado
+        int responseId = response.jsonPath().getInt("id");
+        assertThat(responseId).isBetween(1, 10);
     }
 }
