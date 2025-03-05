@@ -1,11 +1,8 @@
-
-// Comparadores do Hamcrest
+// Função given
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-
-// Função given
-import static io.restassured.RestAssured.given;
 
 // Tratamento de erro
 import java.io.IOException;
@@ -19,6 +16,10 @@ import org.junit.jupiter.api.Order;
 
 // Import do @Test
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 
 public class TestUser {
     static String ct = "application/json";
@@ -51,6 +52,7 @@ public class TestUser {
                 .contentType(ct)
                 .log().all()
                 .body(jsonBody)
+
                 .when() // Quando
                 .post(baseURL + "/user")
 
@@ -114,8 +116,7 @@ public class TestUser {
                 .body("email", instanceOf(String.class))
                 .body("password", instanceOf(String.class))
                 .body("phone", instanceOf(String.class))
-                .body("userStatus", instanceOf(Integer.class))               
-        ;
+                .body("userStatus", instanceOf(Integer.class));
     }
 
     @Test
@@ -145,5 +146,30 @@ public class TestUser {
                 .body("code", is(200))
                 .body("type", is("unknown"))
                 .body("message", is("11865005"));
+    }
+
+    @Test
+    @Order(4)
+
+    // DEL
+    public void testDelUser(){
+        given() // Dado que
+        .contentType(ct)
+        .log().all()
+
+        .when() // Quando
+        .delete(baseURL + "/user/" + username)
+
+        .then() // Então
+        .log().all()
+
+        // Comparando o código de requisição
+        .statusCode(200)
+
+        // Comparando as respostas
+        .body("code", is(200))
+        .body("type", is("unknown"))
+        .body("message", is("dwmedeiros"))
+        ;
     }
 }
