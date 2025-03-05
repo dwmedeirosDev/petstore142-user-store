@@ -1,3 +1,5 @@
+// 1- Testes para o método Post, Get, Put e Delete da entidade User
+
 // Função given
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasKey;
@@ -17,6 +19,12 @@ import org.junit.jupiter.api.Order;
 // Import do @Test
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+
+// Import do Gson
+import com.google.gson.Gson;
+
 import org.junit.jupiter.api.MethodOrderer;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -97,7 +105,6 @@ public class TestUser {
                 .body("userStatus", is(userStatus))
 
                 // Teste de contrato
-
                 // Verificação das propriedadas existentes na resposta
                 .body("$", hasKey("id"))
                 .body("$", hasKey("username"))
@@ -152,24 +159,76 @@ public class TestUser {
     @Order(4)
 
     // DEL
-    public void testDelUser(){
+    public void testDelUser() {
         given() // Dado que
-        .contentType(ct)
-        .log().all()
+                .contentType(ct)
+                .log().all()
 
-        .when() // Quando
-        .delete(baseURL + "/user/" + username)
+                .when() // Quando
+                .delete(baseURL + "/user/" + username)
 
-        .then() // Então
-        .log().all()
+                .then() // Então
+                .log().all()
 
-        // Comparando o código de requisição
-        .statusCode(200)
+                // Comparando o código de requisição
+                .statusCode(200)
 
-        // Comparando as respostas
-        .body("code", is(200))
-        .body("type", is("unknown"))
-        .body("message", is("dwmedeiros"))
+                // Comparando as respostas
+                .body("code", is(200))
+                .body("type", is("unknown"))
+                .body("message", is("dwmedeiros"));
+    }
+
+    // 2- Um teste Data Driven para o Post da User
+
+    @ParameterizedTest
+    @Order(5)
+
+    // Chamando o arquivo CSV, pulando a leitura da primeira linha, separando os dados por vírgula
+    @CsvFileSource(resources = "/csv/userMassa.csv", numLinesToSkip = 1, delimiter = ',')
+
+    public void testPostUserDDT(
+
+            // Parâmetros
+            int id,
+            String username,
+            String firstName,
+            String lastName,
+            String email,
+            String password,
+            String phone,
+            int userStatus) {
+
+        // Instanciando o objeto User.java
+        User user = new User();
+
+        // Relacionando os atributos do objeto com os parâmetros do método
+        user.id = id;
+        user.username = username;
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.email = email;
+        user.password = password;
+        user.phone = phone;
+        user.userStatus = userStatus;
+
+        // Instanciando a biblioteca Gson e convertendo o objeto User.java em uma string JSON
+        Gson gson = new Gson();
+        String jsonBody = gson.toJson(user);
+
+        given() // Dado que
+                .contentType(ct)
+                .log().all()
+                .body(jsonBody)
+
+                .when() // Quando
+                .post(baseURL + "/user")
+
+                .then() // Então
+                .log().all()
+
+                // Comparando o código de requisição
+                .statusCode(200)
         ;
     }
 }

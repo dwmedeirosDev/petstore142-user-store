@@ -1,0 +1,6 @@
+id,username,firstName,lastName,email,password,phone,userStatus
+11865003,janedoe,Jane,Doe,jane.doe@example.com,password123,1234567890,1
+11865004,johndoe,John,Doe,john.doe@example.com,password456,0987654321,0
+11865005,maryjane,Mary,Jane,mary.jane@example.com,password789,1122334455,0
+11865006,bobsmith,Bob,Smith,bob.smith@example.com,password101,9988776655,1
+11865007,alice,Ali,Smith,ali.smith@example.com,password202,2233445566,1
