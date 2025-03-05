@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // Função given
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
