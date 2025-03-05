@@ -148,4 +148,28 @@ public class TestStore {
         int responseId = response.jsonPath().getInt("id");
         assertThat(responseId).isBetween(1, 10);
     }
+
+    @Test
+    @Order(3)
+
+    public void TestDelStore() {
+        given() // Dado que
+                .contentType(ct)
+                .log().all()
+
+                .when() // Quando
+                .delete(baseURL + "/store/order/" + id)
+
+                .then()
+                .log().all()
+
+                // Comparando o código de requisição
+                .statusCode(200)
+
+                // Comparando as respostas
+                .body("code", is(200))
+                .body("type", is("unknown"))
+                .body("message", is("9"))
+                ;
+    }
 }
