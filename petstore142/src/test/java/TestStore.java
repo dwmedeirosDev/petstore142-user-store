@@ -18,6 +18,10 @@ import java.nio.file.Paths;
 // Ordem dos @Test
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+
+import com.google.gson.Gson;
 
 import io.restassured.response.Response;
 
@@ -160,7 +164,7 @@ public class TestStore {
                 .when() // Quando
                 .delete(baseURL + "/store/order/" + id)
 
-                .then()
+                .then() // Então
                 .log().all()
 
                 // Comparando o código de requisição
@@ -169,7 +173,52 @@ public class TestStore {
                 // Comparando as respostas
                 .body("code", is(200))
                 .body("type", is("unknown"))
-                .body("message", is("9"))
-                ;
+                .body("message", is("9"));
+    }
+
+    @ParameterizedTest
+    @Order(4)
+
+    // Chamando o arquivo CSV, pulando a leitura da primeira linha, separando os dados por vírgula
+    @CsvFileSource(resources = "/csv/storeMassa.csv", numLinesToSkip = 1, delimiter = ',')
+
+    public void testPostStoreDDT(
+
+            // Parâmetros
+            int id,
+            int petId,
+            int quantity,
+            String shipDate,
+            String status,
+            Boolean complete) {
+
+        // Instanciando o objeto Store.java
+        Store store = new Store();
+
+        // Relacionando os atributos do objeto com os parâmetros do método
+        store.id = id;
+        store.petId = petId;
+        store.quantity = quantity;
+        store.shipDate = shipDate;
+        store.status = status;
+        store.complete = complete;
+
+        // Instanciando a biblioteca Gson e convertendo o objeto Store.java em uma string JSON
+        Gson gson = new Gson();
+        String jsonBody = gson.toJson(store);
+
+        given() // Dado que
+                .contentType(ct)
+                .log().all()
+                .body(jsonBody)
+
+                .when() // Quando
+                .post(baseURL + "/store/order")
+
+                .then() // Então
+                .log().all()
+
+                // Comparando o código de requisição
+                .statusCode(200);
     }
 }

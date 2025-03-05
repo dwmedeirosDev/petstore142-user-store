@@ -1,0 +1,6 @@
+id,petId,quantity,shipDate,status,complete
+1,101,2,2025-03-05T21:00:00.000Z,placed,True
+2,102,1,2025-03-06T10:15:30.500Z,approved,False
+3,103,5,2025-03-07T14:45:10.200Z,delivered,True
+4,104,3,2025-03-08T08:30:45.750Z,placed,False
+5,105,4,2025-03-09T18:20:05.900Z,canceled,False
